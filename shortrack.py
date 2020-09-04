@@ -15,7 +15,7 @@ stop=False
 
 def play(hotkey, src):
 	try:
-		with wave.open(src, 'rb') as wf:
+		with wave.open(PATH+src, 'rb') as wf:
 			data = None
 			stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
 							channels=wf.getnchannels(),

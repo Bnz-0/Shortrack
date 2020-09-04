@@ -1,4 +1,4 @@
-import sys, platform, os, threading, socket
+import sys, platform, os, threading, socket, re
 from time import gmtime, strftime, sleep
 
 SLASH = '\\' if platform.system()=="Windows" else '/'
@@ -10,7 +10,7 @@ STP_SGN = b'\xff' # the hotkey was released
 def read_hk():
 	"Read the hotkeys.conf file and returns a list of tuple `(hotkey, path|QUIT)`"
 	with open(PATH+"hotkeys.conf", 'r') as f:
-		hks = [tuple(l.split(':')) for l in f.read().splitlines()]
+		hks = [tuple(l.split(':')) for l in f.read().splitlines() if re.match(r"^[^\s:]+:[^\s:]+$", l)]
 	if len(hks) >= STP_SGN[0]:
 		raise Exception(f"Read {len(hks)} hotkeys, but the max length allowed is {STP_SGN[0]-1}")
 	return hks

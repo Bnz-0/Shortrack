@@ -43,6 +43,8 @@ First of all, check if you are running the script using **python3**. I don't kno
 
 > If something goes bad, you can find all error raised in the file `shortrack.log` (in the same folder of shortrack.py)
 
+- If the installation fails, try to install the dependencies of PyAudio: https://people.csail.mit.edu/hubert/pyaudio/
+
 - On Windows the _pyaudio_ package have some installation problems, if `pip` doesn't work you can find the same package for windows [here](https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio).  
     So just download it and install it doing `$ pip install .\PyAudio‑<version you have downloaded>.whl`
 

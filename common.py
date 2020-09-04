@@ -17,6 +17,8 @@ def read_hk():
 
 def log(msg):
 	s = f"{strftime('%Y-%m-%d %H:%M:%S', gmtime())}: {msg}\n"
-	print('LOG', s)
+	print('LOG', s, file=sys.stderr)
 	with open(PATH+'shortrack.log', 'a+') as f:
 		f.write(s)
+	if platform.system() != "Windows" and os.getuid() == 0:
+		os.chmod(PATH+'shortrack.log', 0o666) # sets permissions in case the unprivileged process have to log something

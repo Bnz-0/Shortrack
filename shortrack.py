@@ -4,10 +4,19 @@ import pyaudio, wave
 
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s.bind(('127.0.0.1',0))
-os.spawnlp(os.P_NOWAIT, # spawn the listener
-	sys.executable, sys.executable,
-	os.path.dirname(os.path.abspath(__file__))+'/hk_listener.py', str(s.getsockname()[1])
-)
+
+# spawn the listener
+if platform.system() != "Windows":
+	os.spawnlp(os.P_NOWAIT,
+		sys.executable, sys.executable,
+		os.path.dirname(os.path.abspath(__file__))+SLASH+'hk_listener.py', str(s.getsockname()[1])
+	)
+else:
+	os.spawnl(os.P_NOWAIT,
+		sys.executable, sys.executable,
+		'"'+os.path.dirname(os.path.abspath(__file__))+SLASH+'hk_listener.py"', str(s.getsockname()[1])
+	)
+
 HKLIST = read_hk()
 p = pyaudio.PyAudio()
 listener_addr = None

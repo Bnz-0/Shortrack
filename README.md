@@ -50,19 +50,3 @@ First of all, check if you are running the script using **python3**. I don't kno
 
 - If you're trying to run it on macOS, probably it doesn't work because of packages. If you want to make it works also on macOS fell free to fix this and make a pull request!
 
----
-
-### What the hell is the "simpler solution"?
-Well, it's the first solution I've made, but in linux it have a big problem:
-
-Because of `keyboard` package (that allow the script to listen every keyboard you press) in Linux you have to run this as **root user**, but for some reason when it try to play an audio it often found the device _busy_ and raise this error:
-
-`ALSA lib pcm_dmix.c:1089:(snd_pcm_dmix_open) unable to open slave`
-
-That's why in the actual version there's 2 different process: the **listener** and the **player**, running as different users.
-
-**"Why you keep both version?"**\
-Because the first one is shorter, simplier, all in a single file, runs as a single process, **it doesn't open any kind socket** and finally... **it works on Windows** (yeah, every kind of process can listen the keyboard without a particular permission... good luck Windows users!)
-
-So basically is a nicer solution with some problems and I decided to keep it here just in case
-

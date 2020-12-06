@@ -8,9 +8,16 @@ ACK_SGN = b'\xfe' # the other process is ready
 STP_SGN = b'\xff' # the hotkey was released
 
 def read_hk():
-	"Read the hotkeys.conf file and returns a list of tuple `(hotkey, path|QUIT)`"
+	"Read the hotkeys.conf file and returns a list of tuple `(mod, hotkey, path|QUIT)`"
 	with open(PATH+"hotkeys.conf", 'r') as f:
-		hks = [tuple(l.split(':')) for l in f.read().splitlines() if re.match(r"^[^\s:]+:[^\s:]+$", l)]
+		hks = []
+		for l in f.read().splitlines():
+			l = l.strip()
+			if len(l) == 0 or l[0] == '#': continue
+			t = tuple(l.split(':'))
+			assert 2 <= len(t) <= 3, "Malformed line in hotkeys.conf: " + l
+			if len(t) == 2: t = ('d', *t)
+			hks.append(t)
 	if len(hks) >= STP_SGN[0]:
 		raise Exception(f"Read {len(hks)} hotkeys, but the max length allowed is {STP_SGN[0]-1}")
 	return hks

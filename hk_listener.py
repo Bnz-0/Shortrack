@@ -42,7 +42,7 @@ def hk_pressed(hk, i):
 
 try: # bind the hotkeys
 	i=0
-	for hotkey, src in read_hk():
+	for _, hotkey, src in read_hk():
 		if src == 'QUIT':
 			kb.add_hotkey(hotkey, end_of_the_fun, args=[i])
 		else:

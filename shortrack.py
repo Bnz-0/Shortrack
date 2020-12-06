@@ -2,6 +2,16 @@
 from common import *
 import pyaudio, wave
 
+class State:
+	def __init__(self, mode = 'd', hotkey = None, src = None, is_playing = False):
+		self.hotkey = hotkey
+		self.src = src
+		self.mode = mode
+		self.is_playing = is_playing
+
+	def __str__(self):
+		return f'hotkey="{self.hotkey}" src="{self.src}" mode={self.mode} is_playing={self.is_playing}'
+
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s.bind(('127.0.0.1',0))
 
@@ -18,25 +28,43 @@ else:
 	)
 
 HKLIST = read_hk()
+state = State()
 p = pyaudio.PyAudio()
 listener_addr = None
-stop=False
+r = player = None
 
-def play(hotkey, src):
+def play():
+	global state
+	state.is_playing = True
 	try:
-		with wave.open(PATH+src, 'rb') as wf:
+		with wave.open(PATH+state.src, 'rb') as wf:
 			data = None
 			stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
 							channels=wf.getnchannels(),
 							rate=wf.getframerate(),
 							output=True)
-			while not stop and data != b'':
+			while state.is_playing and data != b'':
 				data = wf.readframes(1024)
 				stream.write(data)
 			stream.stop_stream()
 			stream.close()
 	except Exception as e:
-		log(f"play({src}, {hotkey}) -> {str(e)}")
+		log(f"play() [{state}] -> {str(e)}")
+	finally:
+		state.is_playing = False
+
+def start_play():
+	global player
+	player = threading.Thread(target=play)
+	player.start()
+
+def stop_play():
+	global player
+	state.is_playing = False # trigger the player to stop
+	if player is not None:
+		player.join()
+		player = None
+
 
 ack = None
 try: # wait for the listener
@@ -49,24 +77,43 @@ except Exception as e:
 del ack, ACK_SGN
 print('PLAYER READY')
 
-r = player = None
+
 while True:
 	try:
-		r, addr = s.recvfrom(1)
-		print('PLAYER recv', r, addr)
+		(index,*_), addr = s.recvfrom(1)
+		print('PLAYER recv', index, addr)
 		if addr != listener_addr: continue
-		elif r == STP_SGN:
-			stop=True
-			if player is not None:
-				player.join()
-		elif HKLIST[r[0]][1] == 'QUIT': break
-		else:
-			stop=False
-			player = threading.Thread(target=play, args=HKLIST[r[0]])
-			player.start()
+
+		new_state = None
+		if index == STP_SGN[0]:
+			new_state = State()
+		elif index < len(HKLIST):
+			new_state = State(*HKLIST[index], False)
+		else: # invalid index
+			log(f"Invalid index recieved: {index}")
+			continue
+
+		if new_state.src == 'QUIT':
+			stop_play()
+			break
+
+		if state.mode == 'c':
+			if new_state.hotkey is None: continue
+			if state.is_playing and new_state.hotkey == state.hotkey:
+				stop_play()
+				state = State()
+				continue
+
+		if state.is_playing and new_state.hotkey != state.hotkey:
+			stop_play()
+		state.mode, state.hotkey, state.src = new_state.mode, new_state.hotkey, new_state.src
+		if state.hotkey is not None:
+			start_play()
+
 	except Exception as e:
 			log(f"listening for hotkeys (recv={r}, addr={addr}, listener_addr={listener_addr}) -> {str(e)}")
 
 p.terminate()
 s.close()
 print('PLAYER DIED')
+

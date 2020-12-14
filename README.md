@@ -21,14 +21,23 @@ Every shortcuts and trucks are completely configurable, so you can use it with e
 All you need to do is modify the file "`hotkeys.conf`".  
 The syntax is really simple, each line define a **shortrack** in this way:
 
-`<keys>:<rel_path>`
+`[mode:]<keys>:<rel_path>`
 
 Where `keys` are the keys you choose to press to trigger the track and `rel_path` is the **relative** path to a .wav file
 
 > The keys must be written like [this specification](https://github.com/boppreh/keyboard#keyboardparse_hotkeyhotkey).  
 > Simply: **keys separated by a _+_**
 
-There are also a special keyword which you can use as a path:
+### Modes
+The `mode` is an optional parameter that specifies the behavior of the track:
+- _default_: the track is reproduced only when all the `keys` is held down
+- **c** (continues): when all the `keys` are pressed the track starts playing and it will stops only after the same `keys` are pressed again
+- **l** (loop): when the track finishes it restart from the beginning
+
+> The modes can be put in combo, for example 'cl' create a track that go without keeping the keys hold down and restart when it finishes.
+
+### Special keys
+There are also a special keyword which you can use as a `rel_path`:
 - **QUIT**: the hotkey associated to this will kill the script's execution
 
 > You can take a look at the standard `hotkeys.conf` in this repo for a simple example

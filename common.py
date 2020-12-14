@@ -16,7 +16,7 @@ def read_hk():
 			if len(l) == 0 or l[0] == '#': continue
 			t = tuple(l.split(':'))
 			assert 2 <= len(t) <= 3, "Malformed line in hotkeys.conf: " + l
-			if len(t) == 2: t = ('d', *t)
+			if len(t) == 2: t = ('', *t)
 			hks.append(t)
 	if len(hks) >= STP_SGN[0]:
 		raise Exception(f"Read {len(hks)} hotkeys, but the max length allowed is {STP_SGN[0]-1}")

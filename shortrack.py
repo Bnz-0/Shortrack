@@ -37,17 +37,20 @@ def play():
 	global state
 	state.is_playing = True
 	try:
-		with wave.open(PATH+state.src, 'rb') as wf:
-			data = None
-			stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
-							channels=wf.getnchannels(),
-							rate=wf.getframerate(),
-							output=True)
-			while state.is_playing and data != b'':
-				data = wf.readframes(1024)
-				stream.write(data)
-			stream.stop_stream()
-			stream.close()
+		while True:
+			with wave.open(PATH+state.src, 'rb') as wf:
+				data = None
+				stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
+								channels=wf.getnchannels(),
+								rate=wf.getframerate(),
+								output=True)
+				while state.is_playing and data != b'':
+					data = wf.readframes(1024)
+					stream.write(data)
+				stream.stop_stream()
+				stream.close()
+				if not state.is_playing or 'l' not in state.mode:
+					break
 	except Exception as e:
 		log(f"play() [{state}] -> {str(e)}")
 	finally:
@@ -97,7 +100,7 @@ while True:
 			stop_play()
 			break
 
-		if state.mode == 'c':
+		if 'c' in state.mode:
 			if new_state.hotkey is None: continue
 			if state.is_playing and new_state.hotkey == state.hotkey:
 				stop_play()

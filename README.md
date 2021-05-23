@@ -37,7 +37,7 @@ The `mode` is an optional parameter that specifies the behavior of the track:
 > The modes can be put in combo, for example 'cl' create a track that go without keeping the keys hold down and restart when it finishes.
 
 ### Special keys
-There are also a special keyword which you can use as a `rel_path`:
+There are also special keywords which you can use as a `rel_path`:
 - **QUIT**: the hotkey associated to this will kill the script's execution
 - **PAUSE**: this will ignore any track to be played until RESUME
 - **RESUME**: resume the standard behavior (i.e. plays again the tracks)

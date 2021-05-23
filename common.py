@@ -4,6 +4,12 @@ from time import gmtime, strftime, sleep
 SLASH = '\\' if platform.system()=="Windows" else '/'
 PATH = sys.argv[0][:sys.argv[0].rfind(SLASH)+1] if SLASH in sys.argv[0] else "."+SLASH
 
+# special keys
+QUIT = 'QUIT'
+PAUSE = 'PAUSE'
+RESUME = 'RESUME'
+PAUSE_RESUME = 'PAUSE_RESUME'
+
 ACK_SGN = b'\xfe' # the other process is ready
 STP_SGN = b'\xff' # the hotkey was released
 

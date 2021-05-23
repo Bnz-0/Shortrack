@@ -1,4 +1,5 @@
 #!/bin/env python3
+import sys
 from common import *
 import pyaudio, wave
 
@@ -77,7 +78,7 @@ try: # wait for the listener
 		s.sendto(ACK_SGN, listener_addr)
 except Exception as e:
 		log(f"waiting for the listener (recv={ack}, addr={listener_addr}) -> {str(e)}")
-		exit(1)
+		sys.exit(1)
 del ack, ACK_SGN
 print('PLAYER READY')
 
@@ -97,17 +98,17 @@ while True:
 			log(f"Invalid index recieved: {index}")
 			continue
 
-		if new_state.src == 'QUIT':
+		if new_state.src == QUIT:
 			stop_play()
 			break
-		if new_state.src == 'PAUSE':
+		if new_state.src == PAUSE:
 			stop_play()
 			state.active = False
 			continue
-		if new_state.src == 'RESUME':
+		if new_state.src == RESUME:
 			state.active = True
 			continue
-		if new_state.src == 'PAUSE_RESUME':
+		if new_state.src == PAUSE_RESUME:
 			stop_play()
 			state.active = not state.active
 			continue
@@ -133,4 +134,3 @@ while True:
 p.terminate()
 s.close()
 print('PLAYER DIED')
-

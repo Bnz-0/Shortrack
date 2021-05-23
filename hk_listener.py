@@ -1,3 +1,4 @@
+import sys
 from common import *
 import keyboard as kb
 from elevate import elevate
@@ -20,7 +21,7 @@ try:
 		except socket.timeout: pass
 except Exception as e:
 	log(f"waiting for the player -> {str(e)}")
-	exit(1)
+	sys.exit(1)
 
 s.settimeout(None)
 del ACK_SGN
@@ -43,14 +44,14 @@ def hk_pressed(hk, i):
 try: # bind the hotkeys
 	i=0
 	for _, hotkey, src in read_hk():
-		if src == 'QUIT':
+		if src == QUIT:
 			kb.add_hotkey(hotkey, end_of_the_fun, args=[i])
 		else:
 			kb.add_hotkey(hotkey, hk_pressed, args=[hotkey, i])
 		i+=1
 except Exception as e:
 	log(f"binding the hotkeys -> {str(e)}")
-	exit(1)
+	sys.exit(1)
 
 print('LISTENER READY')
 death.wait()

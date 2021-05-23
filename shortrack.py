@@ -3,11 +3,12 @@ from common import *
 import pyaudio, wave
 
 class State:
-	def __init__(self, mode = 'd', hotkey = None, src = None, is_playing = False):
+	def __init__(self, mode = 'd', hotkey = None, src = None, is_playing = False, active = True):
 		self.hotkey = hotkey
 		self.src = src
 		self.mode = mode
 		self.is_playing = is_playing
+		self.active = active
 
 	def __str__(self):
 		return f'hotkey="{self.hotkey}" src="{self.src}" mode={self.mode} is_playing={self.is_playing}'
@@ -99,6 +100,19 @@ while True:
 		if new_state.src == 'QUIT':
 			stop_play()
 			break
+		if new_state.src == 'PAUSE':
+			stop_play()
+			state.active = False
+			continue
+		if new_state.src == 'RESUME':
+			state.active = True
+			continue
+		if new_state.src == 'PAUSE_RESUME':
+			stop_play()
+			state.active = not state.active
+			continue
+
+		if not state.active: continue
 
 		if 'c' in state.mode:
 			if new_state.hotkey is None: continue

@@ -1,8 +1,7 @@
-import sys, platform, os, threading, socket, re
-from time import gmtime, strftime, sleep
+import sys, platform, os
+from time import gmtime, strftime
 
-SLASH = '\\' if platform.system()=="Windows" else '/'
-PATH = sys.argv[0][:sys.argv[0].rfind(SLASH)+1] if SLASH in sys.argv[0] else "."+SLASH
+PATH = os.path.dirname(__file__) or '.'
 
 # special keys
 QUIT = 'QUIT'
@@ -13,9 +12,11 @@ PAUSE_RESUME = 'PAUSE_RESUME'
 ACK_SGN = b'\xfe' # the other process is ready
 STP_SGN = b'\xff' # the hotkey was released
 
+pjoin = os.path.join
+
 def read_hk():
 	"Read the hotkeys.conf file and returns a list of tuple `(mod, hotkey, path|QUIT)`"
-	with open(PATH+"hotkeys.conf", 'r') as f:
+	with open(pjoin(PATH,"hotkeys.conf"), 'r') as f:
 		hks = []
 		for l in f.read().splitlines():
 			l = l.strip()
@@ -31,7 +32,7 @@ def read_hk():
 def log(msg):
 	s = f"{strftime('%Y-%m-%d %H:%M:%S', gmtime())}: {msg}\n"
 	print('LOG', s, file=sys.stderr)
-	with open(PATH+'shortrack.log', 'a+') as f:
+	with open(pjoin(PATH,'shortrack.log'), 'a+') as f:
 		f.write(s)
 	if platform.system() != "Windows" and os.getuid() == 0:
-		os.chmod(PATH+'shortrack.log', 0o666) # sets permissions in case the unprivileged process have to log something
+		os.chmod(pjoin(PATH,'shortrack.log'), 0o666) # sets permissions in case the unprivileged process has to log something

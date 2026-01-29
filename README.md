@@ -1,3 +1,8 @@
+### ⚠️ Repo moved to Codeberg: https://codeberg.org/bnz/lshortrack ⚠️
+
+---
+---
+
 # Shortrack
 
 **Shortrack is a potentially fun script that permit to play track using keyboard-shortcut.**
